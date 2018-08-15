@@ -1,4 +1,4 @@
-# ionic2-alpha-scroll
+# ionic4-alpha-scroll
 Configurable Ionic 2 component for alphabetically indexed list with an alpha scroll bar.  This component has a few improvements on the original Ionic 1 component, mainly the panning functionality on the alpha wheel scroll shown below in the demo.
 
 [![NPM](https://nodei.co/npm/ionic2-alpha-scroll.png?downloads=true&stars=true)](https://nodei.co/npm/ionic2-alpha-scroll/)
