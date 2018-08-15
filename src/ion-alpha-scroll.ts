@@ -8,7 +8,7 @@ import {
   SimpleChange
 } from '@angular/core';
 import { CSSEscape } from './util-classes';
-import { Content, Scroll } from 'ionic-angular';
+import { Content, Scroll } from '@ionic/angular';
 import { NgTemplateOutlet } from '@angular/common';
 import * as _ from 'lodash';
 import * as Hammer from 'hammerjs';
@@ -32,50 +32,63 @@ import * as Hammer from 'hammerjs';
       </li>
     </ul>
   `,
-  styles: [`
-    .ion-alpha-sidebar {
-      position: fixed;
-      right: 0;
-      display: flex;
-      flex-flow: column;
-      z-index: 50000;
-      margin: 10px 0px;
-    }
+  styles: [
+    `
+      .ion-alpha-sidebar {
+        position: fixed;
+        right: 0;
+        display: flex;
+        flex-flow: column;
+        z-index: 50000;
+        margin: 10px 0px;
+      }
 
-    .ion-alpha-sidebar li {
-      flex: 1 1 auto;
-      list-style: none;
-      width: 40px;
-      text-align: center;
-    }
+      .ion-alpha-sidebar li {
+        flex: 1 1 auto;
+        list-style: none;
+        width: 40px;
+        text-align: center;
+      }
 
-    .ion-alpha-sidebar li a {
-      font-size: 16px;
-    }
+      .ion-alpha-sidebar li a {
+        font-size: 16px;
+      }
 
-    .ion-alpha-sidebar li a.selected {
-      font-weight: bold;
-      font-size: 20px;
-    }
-  `]
+      .ion-alpha-sidebar li a.selected {
+        font-weight: bold;
+        font-size: 20px;
+      }
+    `
+  ]
 })
 export class IonAlphaScroll {
-  @ViewChild(Scroll) _scrollEle: Scroll;
+  @ViewChild(Scroll)
+  _scrollEle: Scroll;
 
-  @Input() listData: any;
-  @Input() key: string;
-  @Input() itemTemplate: ElementRef;
-  @Input() currentPageClass: any;
-  @Input() highlight: boolean = false;
-  @Input() triggerChange: any;
+  @Input()
+  listData: any;
+  @Input()
+  key: string;
+  @Input()
+  itemTemplate: ElementRef;
+  @Input()
+  currentPageClass: any;
+  @Input()
+  highlight: boolean = false;
+  @Input()
+  triggerChange: any;
 
   sortedItems: any = {};
   alphabet: any = [];
 
-  constructor(@Host() private _content: Content, private _elementRef: ElementRef, private vcRef: ViewContainerRef) {
-  }
+  constructor(
+    @Host() private _content: Content,
+    private _elementRef: ElementRef,
+    private vcRef: ViewContainerRef
+  ) {}
 
   ngOnInit() {
+    this._scrollEle.scrollEvents = true;
     setTimeout(() => {
       this.setupHammerHandlers();
       this.setupScrollHandlers();
@@ -99,24 +112,26 @@ export class IonAlphaScroll {
   }
 
   calculateScrollDimensions() {
-    let dimensions = this._content.getContentDimensions();
+    let scrollElem = this._content.getScrollElement();
     return {
-      height: dimensions.contentHeight + 'px',
-      width: (dimensions.contentWidth - 40) + 'px'
+      height: scrollElem.clientHeight + 'px',
+      width: scrollElem.clientWidth - 40 + 'px'
     };
   }
 
   calculateDimensionsForSidebar() {
     return {
-      top: this._content.contentTop + 'px',
-      height: (this._content.getContentDimensions().contentHeight - 20) + 'px'
-    }
+      top: this._content.getScrollElement().clientTop + 'px',
+      height: this._content.getScrollElement().clientHeight - 20 + 'px'
+    };
   }
 
   alphaScrollGoToList(letter: string = null) {
     if (!letter) {
       const selector: string = '.ion-alpha-scroll ion-item-divider';
-      const letterDivider: any = this._elementRef.nativeElement.querySelector(selector);
+      const letterDivider: any = this._elementRef.nativeElement.querySelector(
+        selector
+      );
 
       if (letterDivider) {
         const letterDividerId: string = letterDivider.id;
@@ -126,12 +141,13 @@ export class IonAlphaScroll {
 
     if (letter) {
       const selector: string = '#scroll-letter-' + CSSEscape.escape(letter);
-      const letterDivider: any = this._elementRef.nativeElement.querySelector(selector);
+      const letterDivider: any = this._elementRef.nativeElement.querySelector(
+        selector
+      );
 
       if (letterDivider) {
         const offsetY = letterDivider.offsetTop;
-        const _scrollContent: any = this._scrollEle._scrollContent.nativeElement;
-        _scrollContent.scrollTop = offsetY;
+        this._scrollEle.scrollToTop = offsetY;
         this.highlightLetter(letter);
       }
     }
@@ -157,35 +173,45 @@ export class IonAlphaScroll {
   }
 
   setupHammerHandlers() {
-    let sidebarEle: HTMLElement = this._elementRef.nativeElement.querySelector('.ion-alpha-sidebar');
+    let sidebarEle: HTMLElement = this._elementRef.nativeElement.querySelector(
+      '.ion-alpha-sidebar'
+    );
 
     if (!sidebarEle) return;
 
     let mcHammer = new Hammer(sidebarEle, {
       recognizers: [
         // RecognizerClass, [options], [recognizeWith, ...], [requireFailure, ...]
-        [Hammer.Pan, { direction: Hammer.DIRECTION_VERTICAL }],
+        [Hammer.Pan, { direction: Hammer.DIRECTION_VERTICAL }]
       ]
     });
 
-    mcHammer.on('panup pandown', _.throttle((e: any) => {
-      const closestEle: any = document.elementFromPoint(e.center.x, e.center.y);
-      if (closestEle && ['LI', 'A'].indexOf(closestEle.tagName) > -1) {
-        const letter = closestEle.innerText;
-        if (letter) {
-          this.alphaScrollGoToList(letter);
+    mcHammer.on(
+      'panup pandown',
+      _.throttle((e: any) => {
+        const closestEle: any = document.elementFromPoint(
+          e.center.x,
+          e.center.y
+        );
+        if (closestEle && ['LI', 'A'].indexOf(closestEle.tagName) > -1) {
+          const letter = closestEle.innerText;
+          if (letter) {
+            this.alphaScrollGoToList(letter);
+          }
         }
-      }
-    }, 50));
+      }, 50)
+    );
   }
 
   setupScrollHandlers() {
     if (!this.highlight) return;
 
-    this._scrollEle.addScrollEventListener(($e) => {
+    this._scrollEle.ionScroll.subscribe($e => {
       const offsetY = $e.target.scrollTop;
       const selector: string = '.ion-alpha-scroll ion-item-divider';
-      const letterDividers: any = this._elementRef.nativeElement.querySelectorAll(selector);
+      const letterDividers: any = this._elementRef.nativeElement.querySelectorAll(
+        selector
+      );
 
       for (var i = 0; i < letterDividers.length; i++) {
         if (letterDividers[i].offsetTop <= offsetY) {
@@ -203,17 +229,20 @@ export class IonAlphaScroll {
   highlightLetter(letter: string) {
     if (!this.highlight) return;
 
-    let sidebarLetterElements: any = this._elementRef.nativeElement.querySelectorAll('.ion-alpha-sidebar li a');
+    let sidebarLetterElements: any = this._elementRef.nativeElement.querySelectorAll(
+      '.ion-alpha-sidebar li a'
+    );
     for (var i = 0; i < sidebarLetterElements.length; i++) {
-      sidebarLetterElements[i].classList.remove("selected");
+      sidebarLetterElements[i].classList.remove('selected');
     }
 
-    let letterEl: any = this._elementRef.nativeElement.querySelector('#sidebar-letter-' + letter);
-    letterEl.classList.add("selected");
+    let letterEl: any = this._elementRef.nativeElement.querySelector(
+      '#sidebar-letter-' + letter
+    );
+    letterEl.classList.add('selected');
   }
 
   trackBySortedItems(index: number, item: any): number {
     return index;
   }
-
 }
