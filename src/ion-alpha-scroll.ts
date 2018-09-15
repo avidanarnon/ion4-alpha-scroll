@@ -15,51 +15,8 @@ import * as Hammer from 'hammerjs';
 
 @Component({
   selector: 'ion-alpha-scroll',
-  template: `
-    <ion-scroll class="ion-alpha-scroll" [ngStyle]="calculateScrollDimensions()" scrollX="false" scrollY="true">
-      <ion-item-group class="ion-alpha-list-outer">
-        <div *ngFor="let items of sortedItems | mapToIterable; trackBy:trackBySortedItems">
-          <ion-item-divider id="scroll-letter-{{items.key}}">{{items.key}}</ion-item-divider>
-          <div *ngFor="let item of items.value">
-            <ng-container *ngTemplateOutlet="itemTemplate; context: item"></ng-container>
-          </div>
-        </div>
-      </ion-item-group>
-    </ion-scroll>
-    <ul class="ion-alpha-sidebar" [ngStyle]="calculateDimensionsForSidebar()">
-      <li *ngFor="let letter of alphabet" tappable (click)="alphaScrollGoToList(letter)">
-        <a id="sidebar-letter-{{letter}}">{{letter}}</a>
-      </li>
-    </ul>
-  `,
-  styles: [
-    `
-      .ion-alpha-sidebar {
-        position: fixed;
-        right: 0;
-        display: flex;
-        flex-flow: column;
-        z-index: 50000;
-        margin: 10px 0px;
-      }
-
-      .ion-alpha-sidebar li {
-        flex: 1 1 auto;
-        list-style: none;
-        width: 40px;
-        text-align: center;
-      }
-
-      .ion-alpha-sidebar li a {
-        font-size: 16px;
-      }
-
-      .ion-alpha-sidebar li a.selected {
-        font-weight: bold;
-        font-size: 20px;
-      }
-    `
-  ]
+  templateUrl: 'title.page.html',
+  styleUrls: ['title.page.scss']
 })
 export class IonAlphaScroll {
   @ViewChild(Scroll)

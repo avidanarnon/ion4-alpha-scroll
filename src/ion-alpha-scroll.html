@@ -1,0 +1,15 @@
+<div class="ion-alpha-scroll" [ngStyle]="calculateScrollDimensions()" scrollx="false" scrolly="true">
+    <ion-item-group class="ion-alpha-list-outer">
+        <div *ngFor="let items of sortedItems | mapToIterable; trackBy:trackBySortedItems">
+            <ion-item-divider id="scroll-letter-{{items.key}}">{{items.key}}</ion-item-divider>
+            <div *ngFor="let item of items.value">
+                <ng-container *ngTemplateOutlet="itemTemplate; context: item"></ng-container>
+            </div>
+        </div>
+    </ion-item-group>
+</div>
+<ul class="ion-alpha-sidebar" [ngStyle]="calculateDimensionsForSidebar()">
+    <li *ngFor="let letter of alphabet" tappable (click)="alphaScrollGoToList(letter)">
+        <a id="sidebar-letter-{{letter}}">{{letter}}</a>
+    </li>
+</ul>
